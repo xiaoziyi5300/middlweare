@@ -11,6 +11,7 @@
     <modules>
         <module>openfegin-core</module>
         <module>spring-boot-starter-my-openfegin</module>
+        <module>openfegin-common</module>
     </modules>
 
     <name>my-openfegin</name>

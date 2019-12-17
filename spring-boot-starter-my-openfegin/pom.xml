@@ -17,7 +17,7 @@
             <version>1.1.0</version>
         </dependency>
     </dependencies>
-    <!--<build>
+    <build>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -34,8 +34,8 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-    </build>-->
-    <build>
+    </build>
+   <!-- <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -43,7 +43,7 @@
                 <version>2.2.1.RELEASE</version>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
     <repositories>
         <repository>
             <id>spring-milestones</id>

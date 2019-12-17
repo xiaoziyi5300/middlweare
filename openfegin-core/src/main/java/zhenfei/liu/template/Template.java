@@ -30,7 +30,7 @@ public class Template {
         this.url = url;
         this.path = method.getDeclaredAnnotation(RequestMapping.class).value()[0];
         this.methodType = method.getDeclaredAnnotation(RequestMapping.class).method()[0];
-        this.consumes = method.getDeclaredAnnotation(RequestMapping.class).consumes()[0];
+        this.consumes = method.getDeclaredAnnotation(RequestMapping.class).consumes().length == 0 ? "" :method.getDeclaredAnnotation(RequestMapping.class).consumes()[0];
         this.request = this.url + this.path;
         clazz = method.getReturnType();
     }

@@ -1,5 +1,6 @@
 package zhenfei.liu.config;
 
+import open.fegin.annotation.MyFeginClient;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -21,7 +22,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import zhenfei.liu.MyFeignClientFactoryBean;
 import zhenfei.liu.annotation.EnableMyFeginClients;
-import zhenfei.liu.annotation.MyFeginClient;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -51,6 +51,8 @@ public class EnableMyFeginClientsConfiguration implements ImportBeanDefinitionRe
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
+
+
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -134,6 +136,11 @@ public class EnableMyFeginClientsConfiguration implements ImportBeanDefinitionRe
         definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
     }
+
+    private void registerDefualtConfig(BeanDefinitionRegistry registry){
+
+    }
+
 
     protected ClassPathScanningCandidateComponentProvider getScanner() {
         return new ClassPathScanningCandidateComponentProvider(false) {
