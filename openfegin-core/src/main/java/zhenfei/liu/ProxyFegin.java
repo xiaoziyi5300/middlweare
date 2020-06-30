@@ -36,15 +36,17 @@ public class ProxyFegin<T> implements InvocationHandler {
     private static final Class<org.springframework.web.bind.annotation.RequestParam> RequestParam = org.springframework.web.bind.annotation.RequestParam.class;
     private static final Class<RequestBody> RequestBody = org.springframework.web.bind.annotation.RequestBody.class;
 
-    @Autowired
     private DiscoveryClient discoveryClient;
+    private LoadBalanceService loadBalanceService;
 
     // 需要代理的对象
     private Class<T> target;
 
     // 接受需要代理对象
-    public ProxyFegin(Class<T> target) {
+    public ProxyFegin(Class<T> target, DiscoveryClient discoveryClient, LoadBalanceService loadBalanceService) {
         this.target = target;
+        this.discoveryClient = discoveryClient;
+        this.loadBalanceService = loadBalanceService;
     }
 
     @Override
@@ -67,23 +69,14 @@ public class ProxyFegin<T> implements InvocationHandler {
                 newUrl = "http://" + url;
             }
             template.setUrl(newUrl);
-            template.setRequest(newUrl + template.getRequest());
+            template.setRequest(newUrl + template.getPath());
             return requestService.invoke(template,parame);
         }else{
-            if(discoveryClient == null){
-                discoveryClient = (DiscoveryClient)SpringContextUtil.getBean("discoveryClient");
-            }
             List<ServiceInstance> serviceInstanceList= discoveryClient.getInstances(appName);
             if(CollectionUtils.isEmpty(serviceInstanceList)){
                 throw new RuntimeException("no server with " + appName +" ..");
             }
             //如果loadBalanceService == null 则默认使用 轮询策略
-            LoadBalanceService loadBalanceService = null;
-            try{
-                loadBalanceService = (LoadBalanceService) SpringContextUtil.getBean("loadBalanceService");
-            }catch (NoSuchBeanDefinitionException ex){
-                loadBalanceService = new RoundRobinLoadBalance();
-            }
             ServiceInstance serviceInstance = loadBalanceService.getServer(serviceInstanceList);
             template.setUrl(serviceInstance.getUri().toString());
             template.setRequest(serviceInstance.getUri().toString() + template.getRequest());
