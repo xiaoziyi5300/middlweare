@@ -21,18 +21,6 @@ import zhenfei.liu.remoting.RequestService;
 @ConditionalOnProperty(prefix = "open.fegin.client", value = "enabled", havingValue = "true")
 public class MyOpenFeginAutoConfigure {
 
-
-    /**
-     * 默认http invoke client
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public RequestService requestService() {
-        return new HttpClientRequestService();
-    }
-
     /**
      * 负载均衡配置
      *
