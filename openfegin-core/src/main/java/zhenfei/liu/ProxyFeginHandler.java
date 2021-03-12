@@ -1,28 +1,13 @@
 package zhenfei.liu;
 
-import com.alibaba.fastjson.JSON;
 import open.fegin.annotation.MyFeginClient;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import zhenfei.liu.loadBalance.LoadBalanceService;
-import zhenfei.liu.loadBalance.RoundRobinLoadBalance;
 import zhenfei.liu.remoting.RequestService;
-import zhenfei.liu.remoting.RequestServiceFactory;
-import zhenfei.liu.template.Template;
-import zhenfei.liu.util.SpringContextUtil;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Objects;
 
 /**
