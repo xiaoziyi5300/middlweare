@@ -124,6 +124,8 @@ public class EnableMyFeginClientsConfiguration implements ImportBeanDefinitionRe
         String className = metadata.getClassName();
         BeanDefinitionBuilder definition = BeanDefinitionBuilder.genericBeanDefinition(MyFeignClientFactoryBean.class);
         definition.addPropertyValue("type",className);
+        definition.addPropertyValue("name",attributes.get("name"));
+        definition.addPropertyValue("url",attributes.get("url"));
         String alias = className;
         AbstractBeanDefinition beanDefinition = definition.getBeanDefinition();
         beanDefinition.setPrimary(true);
@@ -137,10 +139,6 @@ public class EnableMyFeginClientsConfiguration implements ImportBeanDefinitionRe
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
     }
 
-    private void registerDefualtConfig(BeanDefinitionRegistry registry){
-
-    }
-
 
     protected ClassPathScanningCandidateComponentProvider getScanner() {
         return new ClassPathScanningCandidateComponentProvider(false) {
@@ -149,7 +147,6 @@ public class EnableMyFeginClientsConfiguration implements ImportBeanDefinitionRe
             protected boolean isCandidateComponent(
                     AnnotatedBeanDefinition beanDefinition) {
                 if (beanDefinition.getMetadata().isIndependent()) {
-                    // TODO until SPR-11711 will be resolved
                     if (beanDefinition.getMetadata().isInterface()
                             && beanDefinition.getMetadata()
                             .getInterfaceNames().length == 1

@@ -1,11 +1,15 @@
 package zhenfei.liu.remoting;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import zhenfei.liu.template.Template;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -16,30 +20,25 @@ import java.util.Objects;
  */
 public abstract class AbstractRequestService implements RequestService{
 
+    private static final Class<org.springframework.web.bind.annotation.RequestParam> RequestParam = org.springframework.web.bind.annotation.RequestParam.class;
+    private static final Class<RequestBody> RequestBody = org.springframework.web.bind.annotation.RequestBody.class;
+
+
     private Method method;
     private Class<?> clazz;
     private String path;
 
     @Override
-    public abstract Object invoke(Template template, String paramer) throws Exception ;
-
-    protected void instance(Template template){
-        this.method = template.getMethod();
+    public  Object invoke(String requestUrl, Method method,Object[] args) throws Exception{
+        this.method = method;
+        Template template = new Template(method,requestUrl);
         this.clazz = template.getClazz();
         this.path = template.getRequest();
+        return doInvoke(requestUrl,this.getParameterName(method,args));
     }
+    //execute method
+    public abstract Object doInvoke(String requestUrl, String paramer)throws Exception;
 
-    //返回接口返回结果类型
-    protected Object getReturnType(){
-        try{
-            return this.clazz.newInstance();
-        }catch (IllegalAccessException e){
-            e.printStackTrace();
-        }catch (InstantiationException ex){
-            ex.printStackTrace();
-        }
-        return null;
-    }
     // 获取接口请求类型 GET POST ....
     protected RequestMethod getMethodReuqesType(){
        return this.method.getDeclaredAnnotation(RequestMapping.class).method()[0];
@@ -62,5 +61,33 @@ public abstract class AbstractRequestService implements RequestService{
 
     public String getPath() {
         return path;
+    }
+
+    private String getParameterName(Method method, Object[] args){
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        int length = parameterAnnotations.length;
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i<length;i++){
+            for (Annotation parameterAnnotation : parameterAnnotations[i]) {
+                if("org.springframework.web.bind.annotation.RequestBody".equals(parameterAnnotation.annotationType().getName())){
+                    RequestBody requestBody = RequestBody.cast(parameterAnnotation);
+                    return JSON.toJSONString(args[i]);
+                }else if("org.springframework.web.bind.annotation.RequestParam".equals(parameterAnnotation.annotationType().getName())){
+                    RequestParam requestParam = RequestParam.cast(parameterAnnotation);
+                    if(!"null".equals(args[i])){
+                        sb.append(requestParam.value()).append("=").append(args[i]);
+                        if(i < length -1 ){
+                            sb.append("&");
+                        }
+                    }
+                }else{
+
+                }
+            }
+        }
+        if(sb.toString().endsWith("&")){
+            return sb.toString().substring(0,sb.toString().length()-1);
+        }
+        return sb.toString();
     }
 }

@@ -7,7 +7,7 @@
   <groupId>zhenfei.liu</groupId>
   <artifactId>my-openfegin</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <modules>
         <module>openfegin-core</module>
         <module>spring-boot-starter-my-openfegin</module>
@@ -15,7 +15,6 @@
     </modules>
 
     <name>my-openfegin</name>
-  <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
   <properties>

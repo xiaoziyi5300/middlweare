@@ -18,12 +18,11 @@ import java.util.Objects;
 public class RestTemplateRequestService extends AbstractRequestService {
 
     @Override
-    public Object invoke(Template template, String paramer) {
-        super.instance(template);
+    public Object doInvoke(String requestUrl, String paramer) {
         //获取restTemplate 对象
         RestTemplate restTemplate = this.restTemplate();
         if(RequestMethod.GET.equals(super.getMethodReuqesType())){
-            return (Object)restTemplate.getForObject(template.getRequest() + "?" + paramer,super.getClazz());
+            return (Object)restTemplate.getForObject(requestUrl + "?" + paramer,super.getClazz());
         }else{
             HttpHeaders requestHeaders = new HttpHeaders();
             if("application/json".equals(super.getConsumes())){
@@ -32,7 +31,7 @@ public class RestTemplateRequestService extends AbstractRequestService {
                 requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             }
             HttpEntity<String> requestEntity = new HttpEntity<String>(paramer, requestHeaders);
-            return (Object)restTemplate.postForObject(template.getRequest(),requestEntity,super.getClazz());
+            return (Object)restTemplate.postForObject(requestUrl,requestEntity,super.getClazz());
         }
     }
 

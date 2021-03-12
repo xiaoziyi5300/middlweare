@@ -1,6 +1,9 @@
 package zhenfei.liu.remoting;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import zhenfei.liu.util.SpringContextUtil;
 
 
@@ -9,10 +12,10 @@ import zhenfei.liu.util.SpringContextUtil;
  * desc RequestService 工厂
  * date 2019/12/16-11:10
  */
+@Configuration
 public class RequestServiceFactory {
 
-    private static RequestService requestService = new HttpClientRequestService();
-
+    /*private static RequestService requestService = new HttpClientRequestService();
     //如果没有指定RequestService 实现  则默认使用httpclient
     public static RequestService getRequestService(){
         RequestService service = null;
@@ -26,6 +29,12 @@ public class RequestServiceFactory {
             service = requestService;
         }
         return service;
+    }*/
+
+    @Bean
+    @ConditionalOnMissingClass
+    public RequestService httpRequestService(){
+        return new HttpClientRequestService();
     }
 
 }

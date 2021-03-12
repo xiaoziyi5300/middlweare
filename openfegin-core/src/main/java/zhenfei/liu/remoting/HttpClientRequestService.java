@@ -18,15 +18,24 @@ import java.util.Map;
  */
 public class HttpClientRequestService extends AbstractRequestService {
 
+   public Integer defaultConnectionTimeout = 20000;
+
+   public final  HttpClient httpClient = new HttpClient();
+
+   public HttpClientRequestService(){
+       httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(defaultConnectionTimeout);
+   };
+
+   public HttpClientRequestService(int connectionTime){
+       defaultConnectionTimeout = connectionTime == 0 ? defaultConnectionTimeout :connectionTime;
+   }
 
     @Override
-    public Object invoke(Template template, String paramer) {
-        super.instance(template);
+    public Object doInvoke(String requestUrl, String paramer) {
         String result = "";
         try{
-            HttpClient httpClient = this.newHttpClientInstance();
             if ("GET".equals(super.getMethodReuqesType().name())) {
-                result = HttpClientHelper.sendGet(httpClient, template.getRequest() + "?" + paramer);
+                result = HttpClientHelper.sendGet(httpClient, requestUrl + "?" + paramer);
             } else {
                 result = HttpClientHelper.sendPost(httpClient, super.getPath(), paramer, super.getConsumes());
             }
@@ -34,22 +43,9 @@ public class HttpClientRequestService extends AbstractRequestService {
                 if ("status".indexOf(result) > 0) {
                     JSONObject jsonObject = JSON.parseObject(result);
                     if (!"200".equals(jsonObject.get("status").toString())) {
-                        throw new RuntimeException("the request url: " + template.getRequest() + " has " + jsonObject.get("error").toString());
+                        throw new RuntimeException("the request url: " + requestUrl + " has " + jsonObject.get("error").toString());
                     }
                 }
-                //如果是基本类型 直接返回 无须进行json 转化
-                /*if("java.lang.String".equals(super.getClazz().getName())
-                    || "java.lang.Integer".equals(super.getClazz().getName())
-                    || "java.lang.Boolean".equals(super.getClazz().getName())
-                    || "java.lang.Long".equals(super.getClazz().getName())
-                     ){
-                    return result;
-                }
-                if( "java.util.Map".equals(super.getClazz().getName())){
-                    return JSON.parseObject(result, Map.class);
-                }
-                Object obj =super.getClazz().newInstance();
-                return JSON.parseObject(result, obj.getClass());*/
                 return coventResult(super.getClazz().getName(), result);
             }
         } catch (Exception e) {
@@ -57,14 +53,6 @@ public class HttpClientRequestService extends AbstractRequestService {
         }
         return null;
     }
-
-    //获取HttpClient 实例
-    private HttpClient newHttpClientInstance() {
-        HttpClient httpClient = new HttpClient();
-        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(15000);
-        return httpClient;
-    }
-
 
     private Object coventResult(String resultType, String result) {
         Object obj = null;
