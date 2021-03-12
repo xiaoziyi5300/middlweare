@@ -31,19 +31,19 @@ public class HttpClientRequestService extends AbstractRequestService {
    }
 
     @Override
-    public Object doInvoke(String requestUrl, String paramer) {
+    public Object doInvoke(Template template, String paramer) {
         String result = "";
         try{
             if ("GET".equals(super.getMethodReuqesType().name())) {
-                result = HttpClientHelper.sendGet(httpClient, requestUrl + "?" + paramer);
+                result = HttpClientHelper.sendGet(httpClient, template.getRequest() + "?" + paramer);
             } else {
-                result = HttpClientHelper.sendPost(httpClient, super.getPath(), paramer, super.getConsumes());
+                result = HttpClientHelper.sendPost(httpClient, template.getRequest(), paramer, super.getConsumes());
             }
             if (StringUtils.hasText(result)) {
                 if ("status".indexOf(result) > 0) {
                     JSONObject jsonObject = JSON.parseObject(result);
                     if (!"200".equals(jsonObject.get("status").toString())) {
-                        throw new RuntimeException("the request url: " + requestUrl + " has " + jsonObject.get("error").toString());
+                        throw new RuntimeException("the request url: " + template.getRequest() + " has " + jsonObject.get("error").toString());
                     }
                 }
                 return coventResult(super.getClazz().getName(), result);

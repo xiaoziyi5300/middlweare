@@ -11,7 +11,7 @@
     <groupId>zhenfei.liu</groupId>
     <artifactId>openfegin-core</artifactId>
     <name>openfegin-core</name>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <properties>
         <spring-cloud.version>Hoxton.RC2</spring-cloud.version>

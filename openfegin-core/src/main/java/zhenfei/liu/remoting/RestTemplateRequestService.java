@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 import zhenfei.liu.template.Template;
-import zhenfei.liu.util.SpringContextUtil;
 
 import java.util.Objects;
 
@@ -17,12 +16,22 @@ import java.util.Objects;
  */
 public class RestTemplateRequestService extends AbstractRequestService {
 
+
+    private RestTemplate restTemplate;
+
+    public RestTemplateRequestService() {
+    }
+
+    ;
+
+    public RestTemplateRequestService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @Override
-    public Object doInvoke(String requestUrl, String paramer) {
-        //获取restTemplate 对象
-        RestTemplate restTemplate = this.restTemplate();
+    public Object doInvoke(Template template, String paramer) {
         if(RequestMethod.GET.equals(super.getMethodReuqesType())){
-            return (Object)restTemplate.getForObject(requestUrl + "?" + paramer,super.getClazz());
+            return (Object) restTemplate.getForObject(template.getRequest() + "?" + paramer, super.getClazz());
         }else{
             HttpHeaders requestHeaders = new HttpHeaders();
             if("application/json".equals(super.getConsumes())){
@@ -31,19 +40,7 @@ public class RestTemplateRequestService extends AbstractRequestService {
                 requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             }
             HttpEntity<String> requestEntity = new HttpEntity<String>(paramer, requestHeaders);
-            return (Object)restTemplate.postForObject(requestUrl,requestEntity,super.getClazz());
+            return (Object) restTemplate.postForObject(template.getRequest(), requestEntity, super.getClazz());
         }
-    }
-
-    //获取 RestTemplate
-    private RestTemplate restTemplate(){
-        RestTemplate restTemplate = (RestTemplate) SpringContextUtil.getBean("restTemplate");
-        if(Objects.isNull(restTemplate)){
-            restTemplate = SpringContextUtil.getBean(RestTemplate.class);
-        }
-        if(Objects.isNull(restTemplate)){
-            throw new RuntimeException("spring restTemplate must no be null");
-        }
-        return restTemplate;
     }
 }

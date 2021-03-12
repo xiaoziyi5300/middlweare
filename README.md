@@ -4,7 +4,7 @@
  <dependency>
             <groupId>zhenfei.liu</groupId>
             <artifactId>spring-boot-starter-my-openfegin</artifactId>
-            <version>1.1.2</version>
+            <version>${version}</version>
   </dependency>
 ```
 ## interface api 示例
@@ -29,7 +29,7 @@ public interface UserService {
 ### 使用@myFeginClient标注接口
 ## 开始open-fegin调用 
 ```java
-@SpringBootApplication(scanBasePackages={"cn.com.lzf","zhenfei.liu"})
+@SpringBootApplication
 @EnableDiscoveryClient
 @EnableMyFeginClients(basePackages = {"server.api"})
 public class ServerClientApplication {
@@ -37,6 +37,15 @@ public class ServerClientApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ServerClientApplication.class, args);
 	}
+	// 默认使用httpclient远程调用 如果向使用org.springframework.web.client.RestTemplate
+	@Bean
+    public RequestService httpRequestService() {
+        HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        httpRequestFactory.setConnectionRequestTimeout(30 * 1000);
+        httpRequestFactory.setConnectTimeout(30 * 3000);
+        httpRequestFactory.setReadTimeout(30 * 3000);
+        return new RestTemplateRequestService(new RestTemplate(httpRequestFactory));
+    }
 }
 ```
 EnableMyFeginClients ## basePackages -> service interface 接口包名 可以多个

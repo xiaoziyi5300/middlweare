@@ -26,18 +26,16 @@ public abstract class AbstractRequestService implements RequestService{
 
     private Method method;
     private Class<?> clazz;
-    private String path;
 
     @Override
     public  Object invoke(String requestUrl, Method method,Object[] args) throws Exception{
         this.method = method;
         Template template = new Template(method,requestUrl);
         this.clazz = template.getClazz();
-        this.path = template.getRequest();
-        return doInvoke(requestUrl,this.getParameterName(method,args));
+        return doInvoke(template, this.getParameterName(method, args));
     }
     //execute method
-    public abstract Object doInvoke(String requestUrl, String paramer)throws Exception;
+    public abstract Object doInvoke(Template template, String paramer) throws Exception;
 
     // 获取接口请求类型 GET POST ....
     protected RequestMethod getMethodReuqesType(){
@@ -59,9 +57,6 @@ public abstract class AbstractRequestService implements RequestService{
         this.clazz = clazz;
     }
 
-    public String getPath() {
-        return path;
-    }
 
     private String getParameterName(Method method, Object[] args){
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
