@@ -46,7 +46,7 @@ public class HttpClientRequestService extends AbstractRequestService {
                         throw new RuntimeException("the request url: " + template.getRequest() + " has " + jsonObject.get("error").toString());
                     }
                 }
-                return coventResult(super.getClazz().getName(), result);
+                return convertResult(super.getClazz().getName(), result);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class HttpClientRequestService extends AbstractRequestService {
         return null;
     }
 
-    private Object coventResult(String resultType, String result) {
+    private Object convertResult(String resultType, String result) {
         Object obj = null;
         switch (resultType) {
             case "java.lang.String":
